@@ -1,5 +1,4 @@
 const mongosse=require('mongoose')
-const config=require('../../config')
 
 const RevenuSchema=new mongosse.Schema({
     montant:{

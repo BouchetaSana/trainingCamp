@@ -1,4 +1,4 @@
-const mongosse=require('mongoose')
+const mongoose=require('mongoose')
 const config=require('../../config')
 
 const DepenseSchema=new mongosse.Schema({
@@ -10,5 +10,5 @@ const DepenseSchema=new mongosse.Schema({
     date:Date,
 })
 
-const Depense=mongosse.model('depense',DepenseSchema)
+const Depense=mongoose.model('depense',DepenseSchema)
 exports.Depense=Depense

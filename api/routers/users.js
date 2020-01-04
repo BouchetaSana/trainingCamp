@@ -2,10 +2,7 @@ const express=require("express")
 const router=express.Router()
 const controller = require("../controllers")
 
-
-router.get('/',()=>{
-    console.log("aa")
-})
+router.get("/",controller.affiche)
 
 router.post("/login", controller.login)
 

@@ -1,4 +1,5 @@
 const {User,validate}=require("../models/user")
+const{Revenu}=require("../models/revenu")
 const bcrypt=require("bcryptjs")
 const store=require("store")
 
@@ -29,13 +30,11 @@ async function login(req,res){
     if (user) return res.status(400).send("User already registered.");
   
     user = new User({
-      Firstname: req.body.Firstname,
-      Lastname: req.body.Lastname,
+      Fullname: req.body.Fullname,
       Username: req.body.Username,
       password: req.body.password,
       email: req.body.email,
-      address: req.body.address,
-      paye: req.body.paye,
+    
     });
     user.password = await bcrypt.hash(user.password, 10);
     if (!user.password) return  res.status(500).json(errors);
@@ -53,6 +52,29 @@ async function login(req,res){
         }))
         res.status(500).json(errors);
       })
+}
+
+
+
+async function affiche(req,res){
+  const users=await User.find();
+  return res.send(users)
+}
+
+
+async function addRevenu(req,res){
+  let ladate=new Date()
+  let revenu= new Revenu({
+    montant:req.body.montant,
+    date:(ladate.getDate()+"/"+(ladate.getMonth()+1)+"/"+ladate.getFullYear()),
+    tag:req.body.tag
+  })
+   revenu.save().then((err,succ)=>{
+     res.status(200).send(revenu)
+   })
+   
   
-    }
-module.exports={login,register};
+
+
+}
+module.exports={login,register,affiche,addRevenu};
