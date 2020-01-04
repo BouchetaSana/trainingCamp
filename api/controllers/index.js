@@ -1,0 +1,58 @@
+const {User,validate}=require("../models/user")
+const bcrypt=require("bcryptjs")
+const store=require("store")
+
+
+async function login(req,res){
+    
+    const user = await User.findOne({ Username: req.body.Username })
+          if (!user) return res.status(401).json({error:"Invalid username or password "}) 
+          const validPassword = await bcrypt.compare(req.body.password, user.password);
+           if (validPassword ){ 
+              const token = user.generateAuthToken();
+              store.set("token", { token: token });
+              res.header("x-auth-token", token).status(200).send({
+                token:token
+              });
+             }
+             else{
+               return res.status(401).json({error:"Invalid password "});
+             }      
+          }
+      
+
+  async function register(req,res){
+    const { error } = validate(req.body);
+    if (error) return res.status(401).send(error.details[0].message);
+  
+    let user = await User.findOne({ email: req.body.email });
+    if (user) return res.status(400).send("User already registered.");
+  
+    user = new User({
+      Firstname: req.body.Firstname,
+      Lastname: req.body.Lastname,
+      Username: req.body.Username,
+      password: req.body.password,
+      email: req.body.email,
+      address: req.body.address,
+      paye: req.body.paye,
+    });
+    user.password = await bcrypt.hash(user.password, 10);
+    if (!user.password) return  res.status(500).json(errors);
+    user.save().then((res)=>{
+      console.log(user)
+      res.status(201).send({
+        _id: user._id,
+        name: user.name,
+        email: user.email
+      });
+    }).catch(err => {
+      //failed to save in database
+        errors.push(new Error({
+          db: err.message
+        }))
+        res.status(500).json(errors);
+      })
+  
+    }
+module.exports={login,register};
