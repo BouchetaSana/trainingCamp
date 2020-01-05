@@ -37,7 +37,7 @@ async function login(req,res){
     
     });
     user.password = await bcrypt.hash(user.password, 10);
-    if (!user.password) return  res.status(500).json(errors);
+    if (!(user.password)) return  res.status(500).json(errors);
     user.save().then((res)=>{
       console.log(user)
       res.status(201).send({
@@ -46,12 +46,9 @@ async function login(req,res){
         email: user.email
       });
     }).catch(err => {
-      //failed to save in database
-        errors.push(new Error({
-          db: err.message
-        }))
-        res.status(500).json(errors);
-      })
+      
+console.log(err)     
+res.send(user) })
 }
 
 
@@ -72,9 +69,6 @@ async function addRevenu(req,res){
    revenu.save().then((err,succ)=>{
      res.status(200).send(revenu)
    })
-   
-  
-
 
 }
 module.exports={login,register,affiche,addRevenu};
